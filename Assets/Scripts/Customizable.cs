@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Customizable : MonoBehaviour
 {
@@ -23,7 +24,8 @@ public class Customizable : MonoBehaviour
 
     [SerializeField] private GameObject body;
     [SerializeField] private GameObject hair;
-
+    [SerializeField] private GameObject characterModel;
+    [SerializeField] private GameObject slider;
 
     [SerializeField] private Transform headAnchor;
     [SerializeField] private Transform handAnchor;
@@ -31,6 +33,8 @@ public class Customizable : MonoBehaviour
     private GameObject curHat;
     private GameObject curClothes;
     private GameObject curItem;
+
+
 
     private void Start()
     {
@@ -126,9 +130,15 @@ public class Customizable : MonoBehaviour
                 {
                     child.gameObject.GetComponent<SkinnedMeshRenderer>().material.color = colorList[key][partIndex[key]];
                 }
-                Debug.Log("update skin");
+                //Debug.Log("update skin");
                 break;
         }
         
+    }
+
+    public void Rotate()
+    {
+        float sliderValue = slider.GetComponent<Slider>().value;
+        characterModel.transform.rotation = Quaternion.Euler(0, sliderValue * 360, 0);
     }
 }
