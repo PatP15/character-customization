@@ -8,16 +8,23 @@ public class Customizable : MonoBehaviour
         {"hat", 0 },
         {"clothes", 0},
         {"item", 0 },
+        {"skin", 0 },
+        {"hair", 0 }
     };
 
     IDictionary<string, GameObject[]> partList = new Dictionary<string, GameObject[]>();
+    IDictionary<string, Color32[]> colorList = new Dictionary<string, Color32[]>();
 
     [SerializeField] private GameObject[] hatModels;
     [SerializeField] private GameObject[] clothesModels;
     [SerializeField] private GameObject[] itemModels;
+    [SerializeField] private Color32[] skinColors;
+    [SerializeField] private Color32[] hairColors;
+
+    [SerializeField] private GameObject body;
+    [SerializeField] private GameObject hair;
 
 
-    [SerializeField] private SkinnedMeshRenderer skinRenderer;
     [SerializeField] private Transform headAnchor;
     [SerializeField] private Transform handAnchor;
    
@@ -30,25 +37,48 @@ public class Customizable : MonoBehaviour
         partList.Add("hat", hatModels);
         partList.Add("clothes", clothesModels);
         partList.Add("item", itemModels);
+        colorList.Add("skin", skinColors);
+        colorList.Add("hair", hairColors);
     }
 
 
     public void IncreaseIndex(string key)
     {
-        if(partIndex[key] < partList[key].Length - 1)
-            partIndex[key]++;
+        if (colorList.ContainsKey(key))
+        {
+            if (partIndex[key] < colorList[key].Length - 1)
+                partIndex[key]++;
+            else
+                partIndex[key] = 0;
+        }
         else
-            partIndex[key] = 0;
+        {
+            if (partIndex[key] < partList[key].Length - 1)
+                partIndex[key]++;
+            else
+                partIndex[key] = 0;
+        }
+        
         UpdateModel(key, partIndex[key]);
     }
 
     public void DecreaseIndex(string key)
     {
-        if (partIndex[key] > 0)
-            partIndex[key]--;
+        if (colorList.ContainsKey(key))
+        {
+            if (partIndex[key] > 0)
+                partIndex[key]--;
+            else
+                partIndex[key] = colorList[key].Length - 1;
+            //Debug.Log(partIndex[key]);
+        }
         else
-            partIndex[key] = 0;
-        //Debug.Log(partIndex[key]);
+        {
+            if (partIndex[key] > 0)
+                partIndex[key]--;
+            else
+                partIndex[key] = partList[key].Length - 1;
+        }
         UpdateModel(key, partIndex[key]);
 
     }
@@ -84,6 +114,19 @@ public class Customizable : MonoBehaviour
                 curItem.SetActive(true);
                 curItem.transform.SetParent(handAnchor);
 
+                break;
+            case "hair":
+                foreach(Transform child in hair.transform)
+                {
+                    child.gameObject.GetComponent<SkinnedMeshRenderer>().material.color = colorList[key][partIndex[key]];
+                }
+                break;
+            case "skin":
+                foreach (Transform child in body.transform)
+                {
+                    child.gameObject.GetComponent<SkinnedMeshRenderer>().material.color = colorList[key][partIndex[key]];
+                }
+                Debug.Log("update skin");
                 break;
         }
         
