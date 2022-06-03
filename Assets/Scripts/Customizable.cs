@@ -175,6 +175,6 @@ public class Customizable : MonoBehaviour
     public void Rotate()
     {
         float sliderValue = slider.GetComponent<Slider>().value;
-        characterModel.transform.rotation = Quaternion.Euler(0, sliderValue * 360, 0);
+        characterModel.transform.rotation = Quaternion.Euler(0, (sliderValue * 360) + 176, 0);
     }
 }
