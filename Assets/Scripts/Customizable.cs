@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System.Linq;
 public class Customizable : MonoBehaviour
 {
     IDictionary<string, int> partIndex = new Dictionary<string, int>(){
@@ -37,6 +37,16 @@ public class Customizable : MonoBehaviour
     private GameObject curItem;
 
     private Animator anim;
+
+    public void Randomize()
+    {
+        for (int i = 0; i < partIndex.Count; i++)
+        {
+            KeyValuePair<string, int> item = partIndex.ElementAt(i);
+            partIndex[item.Key] = Random.Range(0, 4);
+            UpdateModel(item.Key);
+        }
+    }
 
 
     private void Start()
@@ -75,7 +85,7 @@ public class Customizable : MonoBehaviour
                 partIndex[key] = 0;
         }
         
-        UpdateModel(key, partIndex[key]);
+        UpdateModel(key);
     }
 
     public void DecreaseIndex(string key)
@@ -102,12 +112,13 @@ public class Customizable : MonoBehaviour
             else
                 partIndex[key] = animations.Length - 1;
         }
-        UpdateModel(key, partIndex[key]);
+        UpdateModel(key);
 
     }
     
-    public void UpdateModel(string key, int index)
+    public void UpdateModel(string key)
     {
+        //Debug.Log("update");
         switch (key) {
             case "hat":
                 if(curHat != null)
@@ -158,6 +169,8 @@ public class Customizable : MonoBehaviour
         }
         
     }
+
+    
 
     public void Rotate()
     {
