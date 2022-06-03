@@ -10,7 +10,8 @@ public class Customizable : MonoBehaviour
         {"clothes", 0},
         {"item", 0 },
         {"skin", 0 },
-        {"hair", 0 }
+        {"hair", 0 },
+        {"animation", 0}
     };
 
     IDictionary<string, GameObject[]> partList = new Dictionary<string, GameObject[]>();
@@ -21,6 +22,7 @@ public class Customizable : MonoBehaviour
     [SerializeField] private GameObject[] itemModels;
     [SerializeField] private Color32[] skinColors;
     [SerializeField] private Color32[] hairColors;
+    [SerializeField] private string[] animations;
 
     [SerializeField] private GameObject body;
     [SerializeField] private GameObject hair;
@@ -34,6 +36,7 @@ public class Customizable : MonoBehaviour
     private GameObject curClothes;
     private GameObject curItem;
 
+    private Animator anim;
 
 
     private void Start()
@@ -43,6 +46,8 @@ public class Customizable : MonoBehaviour
         partList.Add("item", itemModels);
         colorList.Add("skin", skinColors);
         colorList.Add("hair", hairColors);
+        anim = characterModel.GetComponent<Animator>();
+
     }
 
 
@@ -55,9 +60,16 @@ public class Customizable : MonoBehaviour
             else
                 partIndex[key] = 0;
         }
-        else
+        else if(partList.ContainsKey(key))
         {
             if (partIndex[key] < partList[key].Length - 1)
+                partIndex[key]++;
+            else
+                partIndex[key] = 0;
+        }
+        else
+        {
+            if (partIndex[key] < animations.Length - 1)
                 partIndex[key]++;
             else
                 partIndex[key] = 0;
@@ -76,12 +88,19 @@ public class Customizable : MonoBehaviour
                 partIndex[key] = colorList[key].Length - 1;
             //Debug.Log(partIndex[key]);
         }
-        else
+        else if (partList.ContainsKey(key))
         {
             if (partIndex[key] > 0)
                 partIndex[key]--;
             else
                 partIndex[key] = partList[key].Length - 1;
+        }
+        else
+        {
+            if (partIndex[key] > 0)
+                partIndex[key]--;
+            else
+                partIndex[key] = animations.Length - 1;
         }
         UpdateModel(key, partIndex[key]);
 
@@ -131,6 +150,10 @@ public class Customizable : MonoBehaviour
                     child.gameObject.GetComponent<SkinnedMeshRenderer>().material.color = colorList[key][partIndex[key]];
                 }
                 //Debug.Log("update skin");
+                break;
+            case "animation":
+                //anim.Play(animations[partIndex[key]]);
+                anim.Play(animations[partIndex[key]], -1, 0f);
                 break;
         }
         
